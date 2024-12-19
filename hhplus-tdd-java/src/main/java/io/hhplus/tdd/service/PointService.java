@@ -1,14 +1,21 @@
 package io.hhplus.tdd.service;
 
+import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
+import io.hhplus.tdd.point.PointHistory;
+import io.hhplus.tdd.point.TransactionType;
 import io.hhplus.tdd.point.UserPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PointService {
     @Autowired
     private UserPointTable userPointTable;
+    @Autowired
+    private PointHistoryTable pointHistoryTable;
 
     public UserPoint findUserById(long id) {
         UserPoint currentUser = userPointTable.selectById(id);
@@ -20,6 +27,7 @@ public class PointService {
 
         return currentUser;
         }
+
     public UserPoint chargeUserPoint(long id, long amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("충전 금액은 0보다 커야 합니다.");
@@ -42,6 +50,7 @@ public class PointService {
             throw new IllegalArgumentException("포인트 합계는 1,000,000원을 초과할 수 없습니다.");
         }
 
+        pointHistoryTable.insert(id, changePoint, TransactionType.CHARGE, 1);
         return userPointTable.insertOrUpdate(id, changePoint);
         }
 
@@ -62,6 +71,12 @@ public class PointService {
 
         long changePoint = currentUserPoint - amount;
 
+        pointHistoryTable.insert(id, changePoint, TransactionType.USE, 1);
         return userPointTable.insertOrUpdate(id, changePoint);
     }
+
+    public List<PointHistory> findPointHistoryById(long id) {
+
+            return pointHistoryTable.selectAllByUserId(id);
+       }
 }
