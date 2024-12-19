@@ -1,2 +1,7 @@
 spring:
   application.name: hhplus-tdd
+
+logging:
+  level:
+    root: info
+  config: classpath:log/logback-spring.xml
