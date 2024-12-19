@@ -44,4 +44,24 @@ public class PointService {
 
         return userPointTable.insertOrUpdate(id, changePoint);
         }
+
+    public UserPoint updateUserPoint(long id, long amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("사용 금액은 0보다 커야 합니다.");
+        }
+
+        UserPoint currentUser = userPointTable.selectById(id);
+        if (currentUser == null) {
+            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        }
+
+        long currentUserPoint = currentUser.point();
+        if (currentUserPoint < amount) {
+            throw new IllegalArgumentException("포인트가 부족합니다.");
+        }
+
+        long changePoint = currentUserPoint - amount;
+
+        return userPointTable.insertOrUpdate(id, changePoint);
+    }
 }
