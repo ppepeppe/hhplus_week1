@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <property scope="context" name="SERVICE_NAME" value="${spring.application.name:-hhplus-tdd-jvm}" />
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+
+    <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss.SSS} [%highlight(%-5level)] [%thread] [%logger{36}] - %msg%n%wEx</Pattern>
+        </layout>
+    </appender>
+
+    <appender name="ASYNC-STDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT"/>
+    </appender>
+
+    <!-- 특정 패키지에 대해 DEBUG 레벨 설정 -->
+    <logger name="io.hhplus.tdd" level="DEBUG" additivity="false">
+        <appender-ref ref="ASYNC-STDOUT"/>
+    </logger>
+
+    <!-- 전체 애플리케이션의 기본 로그 레벨 -->
+    <root level="INFO">
+        <appender-ref ref="ASYNC-STDOUT" />
+    </root>
+</configuration>
